@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driving Range Statistics</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: url('background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.5); /* Add a transparent overlay */
+            padding: 20px;
+        }
+
+        .header {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 40px; /* Increased margin for more spacing */
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .progress-container {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            width: 150px;
+            height: 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .progress-container:hover {
+            transform: scale(1.2);
+        }
+
+        .progress-ring {
+            position: relative;
+            width: 120px;
+            height: 120px;
+        }
+
+        .progress-ring circle {
+            fill: none;
+            stroke-width: 10;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+        .progress-ring .background {
+            stroke: rgba(255, 255, 255, 0.3);
+        }
+
+        .progress-ring .progress {
+            stroke: #f9d342;
+            stroke-linecap: round;
+            stroke-dasharray: 0 377;
+            transition: stroke-dasharray 0.5s ease;
+        }
+
+        .progress-ring text {
+            font-size: 1.2rem;
+            fill: #fff;
+            dominant-baseline: middle;
+            text-anchor: middle;
+        }
+
+        .progress-title {
+            margin-top: 10px;
+            font-size: 1rem;
+        }
+    </style>
+    <script>
+        function setProgress(element, value, max) {
+            const circle = element.querySelector('.progress');
+            const radius = circle.r.baseVal.value;
+            const circumference = 2 * Math.PI * radius;
+
+            const offset = circumference - (value / max) * circumference;
+            circle.style.strokeDasharray = `${circumference - offset} ${offset}`;
+
+            const text = element.querySelector('text');
+            text.textContent = `${value}${element.dataset.unit}`;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setProgress(document.getElementById('ball-speed'), 145, 200);
+            setProgress(document.getElementById('launch-angle'), 15.2, 360);
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">Driving Range Statistics</div>
+
+        <div class="stats">
+            <div class="progress-container">
+                <div class="progress-ring" id="ball-speed" data-unit=" mph">
+                    <svg width="120" height="120">
+                        <circle class="background" cx="60" cy="60" r="50"></circle>
+                        <circle class="progress" cx="60" cy="60" r="50"></circle>
+                        <text x="60" y="60">0 mph</text>
+                    </svg>
+                </div>
+                <div class="progress-title">Ball Speed</div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-ring" id="launch-angle" data-unit="°">
+                    <svg width="120" height="120">
+                        <circle class="background" cx="60" cy="60" r="50"></circle>
+                        <circle class="progress" cx="60" cy="60" r="50"></circle>
+                        <text x="60" y="60">0°</text>
+                    </svg>
+                </div>
+                <div class="progress-title">Launch Angle</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
