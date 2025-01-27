@@ -96,6 +96,11 @@ if (!!window.EventSource) {
     document.getElementById("temp").innerHTML = e.data;
   }, false);
 
+  source.addEventListener('soctemperature_reading', function(e) {
+    console.log("soctemperature_reading", e.data);
+    document.getElementById("soctemp").innerHTML = e.data;
+  }, false);
+
   source.addEventListener('accelerometer_readings', function(e) {
     console.log("accelerometer_readings", e.data);
     var obj = JSON.parse(e.data);

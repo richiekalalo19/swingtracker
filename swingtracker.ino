@@ -86,41 +86,61 @@ void setup(void) {
 }
 
 void loop() {
-  sensors_event_t a, g, temp;
-  mpu.getEvent(&a, &g, &temp);
+   sensors_event_t a, g, temp;
+   mpu.getEvent(&a, &g, &temp);
 
   // Read raw accelerometer and gyroscope data
   float accel_x = a.acceleration.x; // Centripetal acceleration (X-axis)
   float accel_y = a.acceleration.y;
   float accel_z = a.acceleration.z;
   float angular_velocity = g.gyro.z; // Z-axis angular velocity (rad/s)
+  // float angular_velocityX = g.gyro.x; // X-axis angular velocity (rad/s)
+  // float angular_velocityY = g.gyro.y; // Y-axis angular velocity (rad/s)
 
-  // Calculate the magnitude of filtered centripetal and tangential acceleration
-  float cent_accel_magnitude = accel_y;
-  float fix_radius = 1.3;
-  float resultant_angular_velocity = sqrt((g.gyro.z * g.gyro.z) + (g.gyro.x * g.gyro.x));
 
-  // Calculate swing speed (v = r * omega)
-  float swing_speed = (accel_y / resultant_angular_velocity) * 2.23694;
-  float fixed_swing_speed = resultant_angular_velocity * fix_radius * 2.23694;
+  float radius = accel_y / (angular_velocity*angular_velocity);
+  // Serial.print('x');
+  // Serial.print(angular_velocityX);
+  // Serial.println();
+  // Serial.print('y');
+  // Serial.print(angular_velocityY);
+  // Serial.println();
+  // Serial.print('z');
+  // Serial.print(angular_velocity);
+  // Serial.println();
+  if(angular_velocity>=2){
+    Serial.print("radius");
+    Serial.print(radius);
+    Serial.println();
+  }
+  // // Calculate the magnitude of filtered centripetal and tangential acceleration
+  // float cent_accel_magnitude = accel_y;
+  // float fix_radius = 1.3;
+  // float resultant_angular_velocity = sqrt((g.gyro.z * g.gyro.z) + (g.gyro.x * g.gyro.x));
 
-  // Print results
+  // // Calculate swing speed (v = r * omega)
+  // float swing_speed = (accel_y / resultant_angular_velocity) * 2.23694;
+  // float fixed_swing_speed = resultant_angular_velocity * fix_radius * 2.23694;
 
-  Serial.print("Angular Velocity: ");
-  Serial.print(resultant_angular_velocity);
-  Serial.println(" rad/s");
+  // // Print results
 
-  Serial.print("Centripetal Acceleration: ");
-  Serial.print(cent_accel_magnitude);
-  Serial.println(" m/s2");
+  // Serial.print("Angular Velocity: ");
+  // Serial.print(resultant_angular_velocity);
+  // Serial.println(" rad/s");
 
-  Serial.print("Swing Speed: ");
-  Serial.print(swing_speed);
-  Serial.println(" mph\n\n");
+  // Serial.print("Centripetal Acceleration: ");
+  // Serial.print(cent_accel_magnitude);
+  // Serial.println(" m/s2");
+
+  // Serial.print("Swing Speed: ");
+  // Serial.print(swing_speed);
+  // Serial.println(" mph\n\n");
   
-  Serial.print("Fixed Swing Speed: ");
-  Serial.print(fixed_swing_speed);
-  Serial.println(" mph\n\n");
+  // Serial.print("Fixed Swing Speed: ");
+  // Serial.print(fixed_swing_speed);
+  // Serial.println(" mph\n\n");
+
+
 
   // Add delay to avoid multiple detections for the same impact
   delay(500);

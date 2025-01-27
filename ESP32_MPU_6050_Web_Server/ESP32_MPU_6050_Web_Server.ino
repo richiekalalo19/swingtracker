@@ -14,8 +14,8 @@
 #include "LittleFS.h"
 
 // Replace with your network credentials
-const char* ssid = "REPLACE_WITH_YOUR_SSID";
-const char* password = "REPLACE_WITH_YOUR_PASSWORD";
+const char* ssid = "Richie";
+const char* password = "12345678";
 
 // Create AsyncWebServer object on port 80
 AsyncWebServer server(80);
@@ -29,6 +29,7 @@ JSONVar readings;
 // Timer variables
 unsigned long lastTime = 0;  
 unsigned long lastTimeTemperature = 0;
+unsigned long lastTimeSoCTemperature = 0;
 unsigned long lastTimeAcc = 0;
 unsigned long gyroDelay = 10;
 unsigned long temperatureDelay = 1000;
@@ -42,6 +43,7 @@ sensors_event_t a, g, temp;
 float gyroX, gyroY, gyroZ;
 float accX, accY, accZ;
 float temperature;
+float SoCtemperature;
 
 //Gyroscope sensor deviation
 float gyroXerror = 0.07;
@@ -125,6 +127,11 @@ String getTemperature(){
   return String(temperature);
 }
 
+String getSoCTemperature(){
+  SoCtemperature = temperatureRead();
+  return String(SoCtemperature);
+}
+
 void setup() {
   Serial.begin(115200);
   initWiFi();
@@ -190,4 +197,10 @@ void loop() {
     events.send(getTemperature().c_str(),"temperature_reading",millis());
     lastTimeTemperature = millis();
   }
+    if ((millis() - lastTimeSoCTemperature) > temperatureDelay) {
+    // Send Events to the Web Server with the Sensor Readings
+    events.send(getSoCTemperature().c_str(),"soctemperature_reading",millis());
+    lastTimeSoCTemperature = millis();
+  }
+  
 }
