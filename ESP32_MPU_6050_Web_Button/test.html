@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Swing Tracker Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .container { display: flex; flex-wrap: wrap; gap: 20px; }
+    .card { border: 1px solid #ccc; border-radius: 8px; padding: 20px; width: 300px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); }
+    .card h3 { margin-top: 0; }
+    .value { font-size: 1.5em; color: #333; }
+    .button { padding: 10px 20px; font-size: 16px; margin-top: 20px; cursor: pointer; border-radius: 5px; border: none; background-color: #4CAF50; color: white; }
+    .button.stop { background-color: #f44336; }
+  </style>
+</head>
+<body>
+  <h1>Swing Tracker Live Readings</h1>
+  <button id="toggleButton" class="button">Start Tracking</button>
+  <div class="container">
+    <div class="card"><h3>Radius (m)</h3><div class="value" id="radius">0.00</div></div>
+    <div class="card"><h3>Angular Velocity (rad/s)</h3><div class="value" id="angular_velocity">0.00</div></div>
+    <div class="card"><h3>Centripetal Acceleration (m/s²)</h3><div class="value" id="cent_accel_magnitude">0.00</div></div>
+    <div class="card"><h3>Swing Speed (mph)</h3><div class="value" id="swing_speed">0.00</div></div>
+    <div class="card"><h3>Fixed Swing Speed (mph)</h3><div class="value" id="fix_swing_speed">0.00</div></div>
+    <div class="card"><h3>Accel X Filtered (m/s²)</h3><div class="value" id="accelX_filtered">0.00</div></div>
+    <div class="card"><h3>Accel Y Filtered (m/s²)</h3><div class="value" id="accelY_filtered">0.00</div></div>
+    <div class="card"><h3>Accel Z Filtered (m/s²)</h3><div class="value" id="accelZ_filtered">0.00</div></div>
+  </div>
+
+  <script>
+    const eventSource = new EventSource('/events');
+    let isReading = false;
+    const toggleButton = document.getElementById('toggleButton');
+
+    toggleButton.addEventListener('click', function() {
+      isReading = !isReading;
+      fetch(`/toggle?state=${isReading ? 'on' : 'off'}`);
+      toggleButton.textContent = isReading ? 'Stop Tracking' : 'Start Tracking';
+      toggleButton.classList.toggle('stop', isReading);
+    });
+
+    eventSource.addEventListener('new_readings', function(event) {
+      if (isReading) {
+        const data = JSON.parse(event.data);
+        document.getElementById('radius').textContent = data.radius.toFixed(2);
+        document.getElementById('angular_velocity').textContent = data.angular_velocity.toFixed(2);
+        document.getElementById('cent_accel_magnitude').textContent = data.cent_accel_magnitude.toFixed(2);
+        document.getElementById('swing_speed').textContent = data.swing_speed.toFixed(2);
+        document.getElementById('fix_swing_speed').textContent = data.fix_swing_speed.toFixed(2);
+        document.getElementById('accelX_filtered').textContent = data.accelX_filtered.toFixed(2);
+        document.getElementById('accelY_filtered').textContent = data.accelY_filtered.toFixed(2);
+        document.getElementById('accelZ_filtered').textContent = data.accelZ_filtered.toFixed(2);
+      }
+    });
+  </script>
+</body>
+</html>
